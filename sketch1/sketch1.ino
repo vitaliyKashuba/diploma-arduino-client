@@ -1,15 +1,25 @@
 #include <UIPEthernet.h>
+#include <SPI.h>
+#include <RFID.h>
 
 #define ETH_SS_PIN 10
 #define RFID_SS_PIN 9
 #define RFID_RST_PIN 8
+
+RFID rfid(RFID_SS_PIN, RFID_RST_PIN);
+
+int serNum0;
+int serNum1;
+int serNum2;
+int serNum3;
+int serNum4;
 
 EthernetClient client;
 signed long next;
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(19200);
 
   digitalWrite(ETH_SS_PIN,LOW);
   digitalWrite(RFID_SS_PIN, HIGH);
@@ -18,6 +28,7 @@ void setup() {
   uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
   Ethernet.begin(mac);
 
+char a[] = "123";
   Serial.print("localIP: ");
   Serial.println(Ethernet.localIP());
   Serial.print("subnetMask: ");
@@ -28,6 +39,11 @@ void setup() {
   Serial.println(Ethernet.dnsServerIP());
 
   next = 0;
+
+  digitalWrite(ETH_SS_PIN,HIGH);
+  digitalWrite(RFID_SS_PIN, LOW);
+  SPI.begin(); 
+  rfid.init();
 }
 
 void doPost()
@@ -37,8 +53,7 @@ void doPost()
           char buf[100];
           Serial.println("Client connected");
           char a[] = "123";
-           sprintf(buf, "POST /post_test HTTP/1.0\r\nContent-Type: application/raw\r\nContent-Length: 3\r\n\r\n%s", a);
-           /////////////////////////////////
+           sprintf(buf, "POST /post_test HTTP/1.0\r\nContent-Type: application/raw\r\nContent-Length: 2\r\n\r\n%d", serNum0);
            Serial.println(buf);
            delay(1000);
            client.println(buf); // Отправляем GET запрос
@@ -55,12 +70,69 @@ void doPost()
       }
 }
 
-void loop() {
+void loop() 
+{
+  if (rfid.isCard()) {
+        if (rfid.readCardSerial()) {
+            if (rfid.serNum[0] != serNum0
+                && rfid.serNum[1] != serNum1
+                && rfid.serNum[2] != serNum2
+                && rfid.serNum[3] != serNum3
+                && rfid.serNum[4] != serNum4
+            ) {
+                /* With a new cardnumber, show it. */
+                Serial.println(" ");
+                Serial.println("Card found");
+                serNum0 = rfid.serNum[0];
+                serNum1 = rfid.serNum[1];
+                serNum2 = rfid.serNum[2];
+                serNum3 = rfid.serNum[3];
+                serNum4 = rfid.serNum[4];
+               
+                //Serial.println(" ");
+                Serial.println("Cardnumber:");
+                Serial.print("Dec: ");
+    Serial.print(rfid.serNum[0],DEC);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[1],DEC);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[2],DEC);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[3],DEC);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[4],DEC);
+                Serial.println(" ");
+                        
+                Serial.print("Hex: ");
+    Serial.print(rfid.serNum[0],HEX);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[1],HEX);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[2],HEX);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[3],HEX);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[4],HEX);
+                Serial.println(" ");
 
-  if (((signed long)(millis() - next)) > 0)
-    {
-      next = millis() + 10000;
-      Serial.println("Client connect");
-      doPost();
+                doPost();
+             } else {
+               /* If we have the same ID, just write a dot. */
+               Serial.print(".");
+             }
+          }
     }
+    
+    rfid.halt();
+
+
+
+
+
+//  if (((signed long)(millis() - next)) > 0)
+//    {
+//      next = millis() + 10000;
+//      Serial.println("Client connect");
+ //     //doPost();
+ //   }
 }
