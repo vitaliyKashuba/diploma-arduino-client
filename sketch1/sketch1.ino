@@ -28,24 +28,23 @@ void setup() {
   Serial.println(Ethernet.dnsServerIP());
 
   next = 0;
-
-  doPost();
 }
 
 void doPost()
 {
   if (client.connect(IPAddress(192,168,10,100),8080))
         {
-          char buf[80];
+          char buf[100];
           Serial.println("Client connected");
-           sprintf(buf, "POST /post_test HTTP/1.0");
+          char a[] = "123";
+           sprintf(buf, "POST /post_test HTTP/1.0\r\nContent-Type: application/raw\r\nContent-Length: 3\r\n\r\n%s", a);
            /////////////////////////////////
            Serial.println(buf);
-           delay(500);
+           delay(1000);
            client.println(buf); // Отправляем GET запрос
-           delay(100);
+           delay(200);
            client.println();
-           delay(500);
+           delay(1000);
            Serial.println("disconnecting.");
            client.stop(); // Завершаем соединение
           
@@ -62,5 +61,6 @@ void loop() {
     {
       next = millis() + 10000;
       Serial.println("Client connect");
+      doPost();
     }
 }
