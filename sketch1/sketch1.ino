@@ -1,22 +1,8 @@
-/*
- * UIPEthernet TcpClient example.
- *
- * UIPEthernet is a TCP/IP stack that can be used with a enc28j60 based
- * Ethernet-shield.
- *
- * UIPEthernet uses the fine uIP stack by Adam Dunkels <adam@sics.se>
- *
- *      -----------------
- *
- * This TcpClient example gets its local ip-address via dhcp and sets
- * up a tcp socket-connection to 192.168.0.1 port 5000 every 5 Seconds.
- * After sending a message it waits for a response. After receiving the
- * response the client disconnects and tries to reconnect after 5 seconds.
- *
- * Copyright (C) 2013 by Norbert Truchsess <norbert.truchsess@t-online.de>
- */
-
 #include <UIPEthernet.h>
+
+#define ETH_SS_PIN 10
+#define RFID_SS_PIN 9
+#define RFID_RST_PIN 8
 
 EthernetClient client;
 signed long next;
