@@ -23,19 +23,10 @@ void setup() {
   digitalWrite(ETH_SS_PIN,LOW);   //activates eherned module
   digitalWrite(RFID_SS_PIN, HIGH);//
 
-  Serial.print("setup");
   uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
   Ethernet.begin(mac);
 
   char a[] = "123";
-  Serial.print("localIP: ");
-  Serial.println(Ethernet.localIP());
-  Serial.print("subnetMask: ");
-  Serial.println(Ethernet.subnetMask());
-  Serial.print("gatewayIP: ");
-  Serial.println(Ethernet.gatewayIP());
-  Serial.print("dnsServerIP: ");
-  Serial.println(Ethernet.dnsServerIP());
 
   digitalWrite(ETH_SS_PIN,HIGH);  //activates rfid module
   digitalWrite(RFID_SS_PIN, LOW); //
@@ -54,7 +45,7 @@ void doPost()
     char buf[100];
     Serial.println("Client connected");
     char a[] = "123";
-    sprintf(buf, "POST /post_test HTTP/1.0\r\nContent-Type: application/raw\r\nContent-Length: 14\r\n\r\n%X %X %X %X %X", serNum0, serNum1, serNum2, serNum3, serNum4);
+    sprintf(buf, "POST /post_test HTTP/1.0\r\nContent-Type: application/raw\r\nContent-Length: 20\r\n\r\nc-219|%X %X %X %X %X", serNum0, serNum1, serNum2, serNum3, serNum4);
     Serial.println(buf);
     delay(1000);
     client.println(buf); // Отправляем GET запрос
