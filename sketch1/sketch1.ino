@@ -45,7 +45,7 @@ void doPost()
     char buf[100];
     Serial.println("Client connected");
     char a[] = "123";
-    sprintf(buf, "POST /post_test HTTP/1.0\r\nContent-Type: application/raw\r\nContent-Length: 20\r\n\r\nc-219|%X %X %X %X %X", serNum0, serNum1, serNum2, serNum3, serNum4);
+    sprintf(buf, "POST /post_test HTTP/1.0\r\nContent-Type: application/raw\r\nContent-Length: 20\r\n\r\nc-219:%X %X %X %X %X", serNum0, serNum1, serNum2, serNum3, serNum4);
     Serial.println(buf);
     delay(1000);
     client.println(buf); // Отправляем GET запрос
